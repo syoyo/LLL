@@ -1,0 +1,13 @@
+Name: 			LLL
+Version: 		0.1
+Description: 		LLL, Lucille Light transport Language.
+License: 		BSD3
+License-file: 		LICENSE
+Author: 		Syoyo Fujita
+Maintainer: 		syoyo@lighttransport.com
+Build-Type: 		Simple
+Cabal-Version: 		>=1.2
+ 
+Executable haq
+  Main-is: 		Main.hs
+  Build-Depends: 	base

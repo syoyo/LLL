@@ -1,0 +1,6 @@
+TODO
+====
+
+* Write LLL language spec.
+* Write LLL compiler.
+* Write LLL documents.
