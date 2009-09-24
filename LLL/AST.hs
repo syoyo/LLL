@@ -35,3 +35,9 @@ data Symbol
 
 type SymbolTable
   = [(String, [Symbol])]
+
+data Func
+  = ShaderFunc Type String      -- FIXME
+    deriving (Show, Eq, Typeable, Data)
+
+type LLLUnit = [Func]

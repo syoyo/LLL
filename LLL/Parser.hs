@@ -82,16 +82,19 @@ addSymbol sym st = trace ("// Add " ++ (show sym)) $
 --
 -- Topmost parsing rule
 --
+program :: LLLParser LLLUnit
 program               = do  { ast <- many (spaces >> global)
                             ; return ast
                             }
-                       <?>   "program"
+                       <?>   "shader program"
 
 
+global :: LLLParser Func
 global                =   functionDefinition
                       <?> "top level definition"
 
 
+functionDefinition ::LLLParser Func
 functionDefinition    = do  { ty    <- option (TyVoid) funType
                             ; name  <- identifier
                             ; symbol "("
@@ -106,8 +109,9 @@ functionDefinition    = do  { ty    <- option (TyVoid) funType
                             -- Add user function to global scope.
                             ; -- updateState (addSymbol $ mkFunSym name ty (extractTysFromDecls decls))
 
-                            ; -- return (UserFunc ty name)
+                            ; return (ShaderFunc ty name)
                             }
+                      <?> "function definition"
 
 funType               =     (reserved "void"  >> return TyVoid)
 
@@ -170,7 +174,6 @@ mkMyError :: ParseError -> FilePath -> ParseError
 mkMyError err fname = setErrorPos (setSourceName (errorPos err) fname) err
 
 
-{-
 run :: LLLParser LLLUnit -> FilePath -> FilePath -> (LLLUnit -> IO ()) -> IO ()
 run p prepname name proc =
   do  { result <- parseLLLFromFile p prepname
@@ -179,10 +182,9 @@ run p prepname name proc =
                             -- when reporting error.
                             putStrLn "Parse err:"
                           ; showLine name (sourceLine (errorPos err)) (sourceColumn (errorPos err))
-                          --; print (showErrorMsg err name)
                           ; print (mkMyError err name)
                           }
-          Right x  -> do  { proc $ typingAST x
+          Right x  -> do  { proc x
                           }
       }
 
@@ -196,7 +198,6 @@ runLex p prepname name proc =
           ; return x
           }
       ) prepname name proc
--}
 
 --
 -- Useful parsing tools
